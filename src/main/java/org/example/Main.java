@@ -3,11 +3,11 @@ package org.example;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
@@ -16,46 +16,40 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 
 public class Main {
-    private static JSplitPane center,left,right;
-    private static JPanel leftTop,leftBottom,rightTop,rightBottom;
+    private final static Preferences settingsPref=Preferences.userRoot().node("swingDemo/settings");
+    private final static Preferences historyPref=Preferences.userRoot().node("swingDemo/history");
+    private static final String[] history = new String[5];
     private static final Border borderGray = BorderFactory.createLineBorder(Color.GRAY,1);
     private static final Font arialBold = new Font("Arial",Font.BOLD,14);
     private static final Font arialMenu = new Font("Arial",Font.PLAIN,16);
     static final Color grayColor = new Color(211,211,211);
-    private final static Preferences settingsPref=Preferences.userRoot().node("swingDemo/settings");
-    private final static Preferences historyPref=Preferences.userRoot().node("swingDemo/history");
-    private static final String[] history = new String[5];
     private static final JTextArea text = new JTextArea();
+    private static int counter=1;
     private static JMenu submenu, submenuClose;
-
-    private static ArrayList<JButton> catalogButtons= new ArrayList<>();
-    private static ArrayList<String> catalogButtonsPaths= new ArrayList<>();
+    private static JTable table;
+    private static JSplitPane center,left,right;
+    private static JPanel rightTop;
     private static JLabel title,filePathLabel;
     private static JPanel leftTopButtons;
+    private static final ArrayList<JButton> catalogButtons= new ArrayList<JButton>();//есть идея переопределить метод remove чтобы он перезаполнял субменю "закрыть>"
+    private static final ArrayList<String> catalogButtonsPaths= new ArrayList<>();
+
+    private static final String[] colNames={"T,c","X,м","Y,м","Z,м","Vx,м/c","Vy,м/c","Vz,м/c"};
 
     public static void main(String[] args){
-     javax.swing.SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-
-            try {
-                createAndShowGUI();
-            } catch (UnsupportedLookAndFeelException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    });
+     javax.swing.SwingUtilities.invokeLater(() -> {
+         try {
+             createAndShowGUI();
+         } catch (UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException |
+                  ClassNotFoundException e) {
+             throw new RuntimeException(e);
+         }
+     });
     }
     public static void createAndShowGUI() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
 
         JFrame frame =new JFrame();//creating instance of JFrame
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        System.out.println(UIManager.getSystemLookAndFeelClassName());
         init(frame);
         frame.setVisible(true);
 
@@ -125,19 +119,15 @@ public class Main {
             center.revalidate();
             left.revalidate();
             right.revalidate();
-            System.out.println("Установлены настройки");
-            System.out.println(settingsPref.getDouble("left",0.5));
-            System.out.println(settingsPref.getDouble("right", 0.5));
-            System.out.println(settingsPref.getDouble("center", 0.5));
         }
     }
 
 
 
-    private static JLabel createLabel(String text, Color color){
+    private static JLabel createLabel(String text){
         JLabel jlabel = new JLabel(text, SwingConstants.CENTER);
         jlabel.setFont(Main.arialBold);
-        jlabel.setBackground(color);
+        jlabel.setBackground(Main.grayColor);
         jlabel.setBorder(borderGray);
         jlabel.setPreferredSize(new Dimension(0,30));
         jlabel.setMaximumSize(new Dimension(2000,30));
@@ -163,39 +153,72 @@ public class Main {
         }
 
         saveHistory(file);
-        System.out.println("История записана!");
         updateHistoryMenu();
-        int a= catalogButtons.size()+1;
+
         catalogButtonsPaths.add(file.getAbsolutePath());
-        JButton catalogButton = new JButton("Траектория "+a);
+        JButton catalogButton = new JButton("Траектория "+counter);
         catalogButton.setPreferredSize(new Dimension(0,30));
         catalogButton.setMaximumSize(new Dimension(2000,30));
         catalogButton.setMinimumSize(new Dimension(80,30));
         catalogButton.setBackground(Color.GRAY);
-        File finalFile = file;
+        String string;
+        try {
+            string=String.join("\n ", readAllLines(Paths.get(file.toURI()), StandardCharsets.UTF_8));
+        } catch (IOException ex) {
+            showMessageDialog(null, "Файл не соответсвует траектории!");
+            System.err.println(ex);
+            return;
+        }
+
+        ArrayList<String> tableRows=new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String str = reader.readLine();
+            while (str != null) {
+                if (str.matches("[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8}")) {
+                    tableRows.addAll(Arrays.asList(str.split(" {2}")));
+                }
+                str = reader.readLine();
+            }
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+
+        String[][] tableData = new String[tableRows.size()/7][7];
+        for (int i=0;i<tableRows.size()/7;i++){
+            for (int j=0;j<7;j++){
+                tableData[i][j]=tableRows.get(i*7+j);
+            }
+        }
+
+
+
         catalogButton.addActionListener(e->{
-            title.setText("Траектории - "+a);
+            title.setText("Траектории - "+counter);
             title.revalidate();
             title.repaint();
 
-            filePathLabel.setText(finalFile.getAbsolutePath());
+            filePathLabel.setText(file.getAbsolutePath());
             filePathLabel.revalidate();
             filePathLabel.repaint();
 
-            try {
-                text.setText(String.join("\n ", readAllLines(Paths.get(finalFile.toURI()), StandardCharsets.UTF_8)));
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+
+            text.setText(string);
+            if (rightTop.getComponentCount()>1)
+                rightTop.remove(1);
+            table = new JTable(tableData,colNames);
+            table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+            rightTop.add(new JScrollPane(table),BorderLayout.CENTER);
+
+            rightTop.revalidate();
+            rightTop.repaint();
+            right.revalidate();
+            right.repaint();
 
 
         });
-
+        counter++;
         fillLeftTop(catalogButton);
-        System.out.println("Кнопка добавлена");
         fillSubmenuClose(catalogButton);
-        System.out.println("Меню удаления добавлено");
-
     }
 
     private static void fillLeftTop(JButton button){
@@ -264,17 +287,17 @@ public class Main {
 
 
         ///LABELS
-        JLabel fileLabel = createLabel("Файл", grayColor);
-        filePathLabel = createLabel("filePath", grayColor);
-        JLabel catalogLabel = createLabel("Каталог", grayColor);
-        JLabel plotLabel = createLabel("График", grayColor);
-        JLabel tableLabel = createLabel("Таблица", grayColor);
+        JLabel fileLabel = createLabel("Файл");
+        filePathLabel = createLabel("filePath");
+        JLabel catalogLabel = createLabel("Каталог");
+        JLabel plotLabel = createLabel("График");
+        JLabel tableLabel = createLabel("Таблица");
         ///END LABELS
 
 
 
         //Заполнение левого верхнего угла
-        leftTop = new JPanel(new BorderLayout());
+        JPanel leftTop = new JPanel(new BorderLayout());
         leftTop.add(catalogLabel,BorderLayout.NORTH);
         leftTopButtons = new JPanel();
         leftTopButtons.setLayout(new BoxLayout(leftTopButtons,BoxLayout.Y_AXIS));
@@ -283,7 +306,7 @@ public class Main {
         ///
 
         ///Заполнение левого нижнего угла
-        leftBottom = new JPanel(new BorderLayout());
+        JPanel leftBottom = new JPanel(new BorderLayout());
         JPanel leftBottomLabel = new JPanel(new BorderLayout());
         leftBottomLabel.add(fileLabel,BorderLayout.NORTH);
         leftBottomLabel.add(filePathLabel,BorderLayout.SOUTH);
@@ -298,7 +321,7 @@ public class Main {
         ///Заполнение правого верхнего угла
         rightTop= new JPanel(new BorderLayout());
         rightTop.add(tableLabel,BorderLayout.NORTH);
-        JTable table = new JTable(100,7);
+        table = new JTable();
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         rightTop.add(new JScrollPane(table), BorderLayout.CENTER);
         right.setTopComponent(rightTop);
@@ -306,7 +329,9 @@ public class Main {
 
 
         ///Заполнение правого нижнего угла
-        right.setBottomComponent(plotLabel);
+        JPanel rightBottom = new JPanel(new BorderLayout());
+        rightBottom.add(plotLabel, BorderLayout.NORTH);
+        right.setBottomComponent(rightBottom);
         ///
 
         frame.setTitle("Траектории");
@@ -325,7 +350,7 @@ public class Main {
 
     private static void saveHistory(File file){
         for (int i=0;i<5;i++){
-            if (history[i]==file.getAbsolutePath())
+            if (Objects.equals(history[i], file.getAbsolutePath()))
                 return;
         }
         swapHistory();
@@ -341,9 +366,7 @@ public class Main {
         for (int i = 0; i < 5; i++) {
             history[i] = historyPref.get(Integer.toString(i), null);
         }
-        System.out.println("История прочитана");
         createHistoryMenu();
-        System.out.println("Меню истории создано");
     }
 
     private static void clearAll(){
@@ -351,8 +374,14 @@ public class Main {
             leftTopButtons.remove(button);
         catalogButtons.clear();
         catalogButtonsPaths.clear();
+        if (rightTop.getComponentCount()>1)
+            rightTop.remove(1);
         text.setText("");
-
+        counter=1;
+        filePathLabel.setText("Path");
+        title.setText("Траектории");
+        left.repaint();left.revalidate();
+        right.repaint();right.revalidate();
     }
 
     private static void createHistoryMenu(){
@@ -365,9 +394,7 @@ public class Main {
                 JMenuItem historyItem = new JMenuItem();
                 historyItem.setText((history[i].substring(history[i].lastIndexOf("\\") + 1)));
                 int finalI = i;
-                historyItem.addActionListener(e -> {
-                    openFile(new File(history[finalI]));
-                });
+                historyItem.addActionListener(e -> {openFile(new File(history[finalI]));});
                 historyItem.setMargin(new Insets(1, -25, 1, 0));
                 submenu.add(historyItem);
             }
@@ -385,8 +412,7 @@ public class Main {
                 JMenuItem historyItem = new JMenuItem();
                 historyItem.setText((history[i].substring(history[i].lastIndexOf("\\") + 1)));
                 int finalI = i;
-                historyItem.addActionListener(e -> {
-                    openFile(new File(history[finalI]));
+                historyItem.addActionListener(e ->{openFile(new File(history[finalI]));
                 });
                 historyItem.setMargin(new Insets(1, -25, 1, 0));
                 submenu.add(historyItem);
@@ -418,6 +444,8 @@ public class Main {
                     text.revalidate();
                     title.setText("Траектории");
                     filePathLabel.setText("Path");
+                    if (rightTop.getComponentCount()>1)
+                        rightTop.remove(1);
                 }
             }
             submenuClose.remove(close);
