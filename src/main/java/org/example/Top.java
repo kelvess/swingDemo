@@ -174,6 +174,7 @@ public class Top {
                 center.closeAction(button, j, this);
                 submenuClose.remove(close);
                 updateCloseMenu(catalogButtons, catalogButtonsPaths, center);
+
             });
             close.setMargin(new Insets(1, -25, 1, 0));
             submenuClose.add(close);

@@ -219,6 +219,7 @@ public class Center {
         catalogButton.addActionListener(e-> this.openAction(string,tableData,file.getAbsolutePath(),top));
         this.setCounter(1);//увеличние на +1 счётчика следующей траектории
         this.fillLeftTop(catalogButton);//заполнение левой верхней панели
+        leftTopButtons.revalidate();
         top.updateCloseMenu(catalogButtons,catalogButtonsPaths,this);//полное перезаполнение субменю для удаления этой кнопки
     }
 
@@ -239,6 +240,7 @@ public class Center {
         //удаление из arraylist<string> с путями
         catalogButtonsPaths.remove(filePathLabel.getText());
         leftTopButtons.repaint();//перерисовка после удаления
+        leftTopButtons.revalidate();//только repaint() не решает отрисовку после закрытия
     }
 
 
