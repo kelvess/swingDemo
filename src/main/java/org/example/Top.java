@@ -146,12 +146,11 @@ public class Top {
     }
 
     //перезаписывает субменю с историей, почти 1в1 с методом createHistoryMenu
-    void updateHistoryMenu(String[] history, Center center){
+    void updateHistoryMenu(Center center){
         submenu.removeAll();
         for (int i=0;i<5;i++)
         {
             if (history[i]!=null) {
-                System.out.println(history[i]);
                 JMenuItem historyItem = new JMenuItem();
                 historyItem.setText((history[i].substring(history[i].lastIndexOf("\\") + 1)));
                 int finalI = i;
@@ -166,12 +165,13 @@ public class Top {
 
     //полностью заполняет субменю "закрыть", срабатывает при нажатии на кнопку из раздела "файл"->"открыть"
     void fillSubmenuClose(ArrayList<JButton> catalogButtons,ArrayList<String> catalogButtonsPaths,Center center){
-        for (JButton button : catalogButtons) {
+        for (int i =0;i<catalogButtons.size();i++) {
             JMenuItem close = new JMenuItem();
-            close.setText(button.getText());
-            int j = Integer.parseInt(button.getText().substring(11));
+            close.setText(catalogButtons.get(i).getText());
+            int j = Integer.parseInt(catalogButtons.get(i).getText().substring(11));
+            int finalI = i;
             close.addActionListener(e -> {
-                center.closeAction(button, j, this);
+                center.closeAction(catalogButtons.get(finalI), j, this, catalogButtonsPaths.get(finalI));
                 submenuClose.remove(close);
                 updateCloseMenu(catalogButtons, catalogButtonsPaths, center);
 
@@ -201,9 +201,6 @@ public class Top {
         }
     }
 
-    public String[] getHistory(){
-        return history;
-    }
 
     public void setTitle(String title){
         this.title.setText(title);

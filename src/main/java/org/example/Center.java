@@ -32,7 +32,7 @@ public class Center {
 
     private final String[] colNames={"T,c","X,м","Y,м","Z,м","Vx,м/c","Vy,м/c","Vz,м/c"};
     private final ArrayList<String> catalogButtonsPaths= new ArrayList<>();
-    private static final ArrayList<JButton> catalogButtons= new ArrayList<JButton>();
+    private static final ArrayList<JButton> catalogButtons= new ArrayList<>();
     void fillLeftTop(JButton button){
         //добавляет кнопку в панель, в arraylist и перерисовывает панель
         leftTopButtons.add(button);
@@ -54,7 +54,7 @@ public class Center {
 
         //создание лейблов для четырех окон, один из них может изменяться поэтому создан как поле
         JLabel fileLabel = createLabel("Файл");
-        filePathLabel = createLabel("filePath");
+        filePathLabel = createLabel("Path");
         JLabel catalogLabel = createLabel("Каталог");
         JLabel plotLabel = createLabel("График");
         JLabel tableLabel = createLabel("Таблица");
@@ -150,7 +150,7 @@ public class Center {
      void clearAll(Top top){
         for (JButton button : catalogButtons)
             leftTopButtons.remove(button);//удаляем все кнопки из верхней левой панели
-        leftTopButtons.revalidate();
+        leftTopButtons.repaint();
         catalogButtons.clear();//очистка поля arraylist с типом JButton
         catalogButtonsPaths.clear();//очистка поля arraylist с типом String
         if (rightTop.getComponentCount()>1)
@@ -158,7 +158,8 @@ public class Center {
         text.setText("");//установка пустого окна с текстом
         counter=1;//установка счётчика открытых файлов на 1
         filePathLabel.setText("Path");//установка filepath на default
-        top.setTitle("Траектории");//уставновка тайтла на default
+        top.setTitle("Траектории");
+        top.updateHistoryMenu(this);
     }
 
     public void setCounter(int i){//сеттер для номера следующего открытого файла
@@ -178,7 +179,7 @@ public class Center {
         }
 
         top.saveHistory(file,this.historyPref);//сохранить в истории открытых файлов
-        top.updateHistoryMenu(top.getHistory(),this);//обновить менюшку с недавними
+        top.updateHistoryMenu(this);//обновить менюшку с недавними
         catalogButtonsPaths.add(file.getAbsolutePath());//добавить в arraylist<string> путей
         JButton catalogButton = new JButton("Траектория "+counter);//создание и настройка кнопки для размещения в левом верхнем углу
         catalogButton.setPreferredSize(new Dimension(0,30));
@@ -224,23 +225,41 @@ public class Center {
     }
 
     //действие при нажатии на одну из кнопок из раздела "закрыть"
-    public void closeAction(JButton button, int j, Top top){
-        leftTopButtons.remove(button);//удаление из верхней левой панельки кнопки открытия
-        if (top.getTitle().length()>11) {//если траектория была открыта
-            if (Integer.parseInt(top.getTitle().substring(13)) == j) {//если номер траектории совпадает с открытой сейчас
-                text.setText("");//установить текст на default
-                top.setTitle("Траектории");//установить тайл на default
-                filePathLabel.setText("Path");//установить filepath на default
-                if (rightTop.getComponentCount()>1)//удалить таблицу если была
-                    rightTop.remove(1);
-            }
+    public void closeAction(JButton button, int j, Top top, String catalogButtonPath){
+        if (catalogButtons.size()==1){//теперь если кнопка осталась последняя - будет
+            // выполняться clearAll - то есть следующие открытые файлы будут нумерованы с 1, а не с последнего+1
+            clearAll(top);
         }
-        //удаление из arraylist<jbutton> с кнопками
-        catalogButtons.remove(button);
-        //удаление из arraylist<string> с путями
-        catalogButtonsPaths.remove(filePathLabel.getText());
-        leftTopButtons.repaint();//перерисовка после удаления
-        leftTopButtons.revalidate();//только repaint() не решает отрисовку после закрытия
+        else{
+            if (top.getTitle().length() > 11) {//если траектория была открыта
+                if (Integer.parseInt(top.getTitle().substring(13)) == j) {//если номер траектории совпадает с открытой сейчас
+                    text.setText("");//установить текст на default
+                    top.setTitle("Траектории");//установить тайл на default
+                    filePathLabel.setText("Path");//установить filepath на default
+                    if (rightTop.getComponentCount() > 1)//удалить таблицу если была
+                        rightTop.remove(1);
+                }
+            }
+
+            //удаление из верхней левой панельки кнопки открытия
+            leftTopButtons.remove(button);
+            //удаление из arraylist<jbutton> с кнопками
+            catalogButtons.remove(button);
+            //удаление из arraylist<string> с путями
+            catalogButtonsPaths.remove(catalogButtonPath);
+
+
+            leftTopButtons.repaint();//перерисовка после удаления
+            leftTopButtons.revalidate();//только repaint() не решает отрисовку после закрытия
+        }
+        for (String h:catalogButtonsPaths){
+            System.out.println(h);
+            System.out.println(filePathLabel.getText());
+        }
+        for (JButton h: catalogButtons){
+            System.out.println(h.getText());
+        }
+
     }
 
 
