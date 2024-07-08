@@ -3,6 +3,7 @@ package testGenerator;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
 public class Generator {
@@ -12,7 +13,7 @@ public class Generator {
     //count - количество созданных файлов (старые будут удалены)
 
 
-    Generator(int start,int h, int i,int count){
+    protected Generator(int start,int h, int i,int count){
         Random rnd = new Random();
         if (start <=-1){
             start=rnd.nextInt(101);
@@ -48,7 +49,7 @@ public class Generator {
 
 
     public void deleteAllFilesFolder(String path) {
-        for (File myFile : new File(path).listFiles())
+        for (File myFile : Objects.requireNonNull(new File(path).listFiles()))
             if (myFile.isFile()) myFile.delete();
     }
 }

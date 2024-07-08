@@ -32,7 +32,7 @@ public class Top {
     private final JPanel top;
     private final String[] history;
 
-    public Top(Preferences settingsPref, Center center, String[] history){
+    protected Top(Preferences settingsPref, Center center, String[] history){
         //заполнение массива с историей
         this.history=history;
         //самый верхний лейбл с заголовком номера открытой траектории и его настройка
@@ -118,7 +118,7 @@ public class Top {
 
 
 
-    public JPanel getJPanel(){
+    protected JPanel getJPanel(){
         return top;
     }
 
@@ -138,7 +138,7 @@ public class Top {
 
     //изначально планировал при последовательном открытии файлов просто дополнять кнопки, при закрытии одного из середины полностью пересоздавать все кнопки
     //в последнем коммите упростил код и теперь при каждом открытии файла кнопки пересоздаются заново
-    void updateCloseMenu(ArrayList<JButton> catalogButtons,ArrayList<String> paths,Center center){
+    protected void updateCloseMenu(ArrayList<JButton> catalogButtons,ArrayList<String> paths,Center center){
         submenuClose.removeAll();
         fillSubmenuClose(catalogButtons,paths,center);
         submenuClose.revalidate();
@@ -162,7 +162,7 @@ public class Top {
     }
 
     //перезаписывает субменю с историей, почти 1в1 с методом createHistoryMenu
-    void updateHistoryMenu(Center center){
+    protected void updateHistoryMenu(Center center){
         submenu.removeAll();
         for (int i=0;i<5;i++)
         {
@@ -180,7 +180,7 @@ public class Top {
     }
 
     //полностью заполняет субменю "закрыть", срабатывает при нажатии на кнопку из раздела "файл"->"открыть"
-    void fillSubmenuClose(ArrayList<JButton> catalogButtons,ArrayList<String> catalogButtonsPaths,Center center){
+    protected void fillSubmenuClose(ArrayList<JButton> catalogButtons,ArrayList<String> catalogButtonsPaths,Center center){
         for (int i =0;i<catalogButtons.size();i++) {
             JMenuItem close = new JMenuItem();
             close.setText(catalogButtons.get(i).getText());
@@ -204,7 +204,7 @@ public class Top {
     }
 
     //сохраняет историю, если файл с таким путём еще не записан в историю
-    void saveHistory(File file, Preferences historyPref){
+    protected void saveHistory(File file, Preferences historyPref){
         for (int i=0;i<5;i++){
             if (Objects.equals(history[i], file.getAbsolutePath()))
                 return;
@@ -218,13 +218,13 @@ public class Top {
     }
 
 
-    public void setTitle(String title){
+    protected void setTitle(String title){
         this.title.setText(title);
         this.title.revalidate();
     }
 
 
-    public String getTitle(){
+    protected String getTitle(){
         return this.title.getText();
     }
 

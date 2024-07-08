@@ -53,7 +53,7 @@ public class Center {
     }
 
 
-    public Center(Preferences historyPref){
+    protected Center(Preferences historyPref){
         //инициализация полей сплит пейнов и их настройки масштабированния
         center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,true);
         left = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true);
@@ -159,7 +159,7 @@ public class Center {
     }
 
 
-     void clearAll(Top top){
+    protected void clearAll(Top top){
         for (JButton button : catalogButtons)
             leftTopButtons.remove(button);//удаляем все кнопки из верхней левой панели
         leftTopButtons.repaint();
@@ -174,11 +174,11 @@ public class Center {
         top.updateHistoryMenu(this);
     }
 
-    public void setCounter(int i){//сеттер для номера следующего открытого файла
+    protected void setCounter(int i){//сеттер для номера следующего открытого файла
         counter+=i;
     }
 
-    public JSplitPane getJSplitPane(){//геттер для центрального сплитпейна
+    protected JSplitPane getJSplitPane(){//геттер для центрального сплитпейна
         return center;
     }
 
@@ -237,7 +237,7 @@ public class Center {
     }
 
     //действие при нажатии на одну из кнопок из раздела "закрыть"
-    public void closeAction(JButton button, int j, Top top, String catalogButtonPath){
+    protected void closeAction(JButton button, int j, Top top, String catalogButtonPath){
         if (catalogButtons.size()==1){//теперь если кнопка осталась последняя - будет
             // выполняться clearAll - то есть следующие открытые файлы будут нумерованы с 1, а не с последнего+1
             clearAll(top);

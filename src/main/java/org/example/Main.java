@@ -3,11 +3,7 @@ package org.example;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.util.prefs.Preferences;
 
 public class Main {
@@ -42,6 +38,7 @@ public class Main {
         Toolkit toolkit= Toolkit.getDefaultToolkit();
         frame.setBounds(toolkit.getScreenSize().width/2 -300,toolkit.getScreenSize().height/2-200,600,400);
         frame.setMinimumSize(new Dimension(600,400));
+        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setLayout(new BorderLayout());
         //создание экземпляров классов center и top
         Center center = new Center(historyPref);
