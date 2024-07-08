@@ -1,13 +1,29 @@
 package org.example;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
-import static org.example.Main.*;
+import static org.example.Main.arialBold;
+import static org.example.Main.grayColor;
 
 public class Top {
     private final JLabel title;
