@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
-import static org.example.Main.arialBold;
-import static org.example.Main.grayColor;
+import static org.example.MainFrame.arialBold;
+import static org.example.MainFrame.grayColor;
 
 public class Top {
     private final JLabel title;
@@ -67,10 +67,10 @@ public class Top {
         menuBar.setPreferredSize(new Dimension(200,30));
         menuBar.setMaximumSize(new Dimension(2000,30));
 
-        JPanel cyan = new JPanel();//панелька для заполения пустого пространства справа cyan
-        cyan.setBackground(Color.cyan);
-        cyan.setBorder(BorderFactory.createLineBorder(Color.cyan,1));
-        menuBar.add(cyan);
+        JPanel cyanJPanel = new JPanel();//панелька для заполения пустого пространства справа cyan
+        cyanJPanel.setBackground(Color.CYAN);
+        cyanJPanel.setBorder(BorderFactory.createLineBorder(Color.CYAN,1));
+        menuBar.add(cyanJPanel);
         menuBar.setBorderPainted(false);//так красивее
         top.add(title,BorderLayout.NORTH);//добавление полоски тайтла сверху
         top.add(menuBar, BorderLayout.SOUTH);//добавление менюбара в основную панель

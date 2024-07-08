@@ -12,8 +12,9 @@ public class Generator {
     //i - кол-во строк, если 0 и меньше, то выбирается от 10 до 1000
     //count - количество созданных файлов (старые будут удалены)
 
-
+    private int start;
     protected Generator(int start,int h, int i,int count){
+        this.start=start;
         Random rnd = new Random();
         if (start <=-1){
             start=rnd.nextInt(101);
@@ -35,10 +36,11 @@ public class Generator {
             String filename = "trajectory" + N +".txt";
             StringBuilder data= new StringBuilder();
             for (int j = 0; j < i; j++) {
-                data.append(start).append(".000  ").append(rnd.nextInt(100000)).append(".").append(rnd.nextInt(10)).append("  ").append(rnd.nextInt(100000)).append(".").append(rnd.nextInt(10)).append("  ").append(rnd.nextInt(100000)).append(".").append(rnd.nextInt(10)).append("  ").append(rnd.nextInt(200)).append(".").append(100 + rnd.nextInt(900)).append("  ").append(rnd.nextInt(200)).append(".").append(100 + rnd.nextInt(900)).append("  ").append(rnd.nextInt(200)).append(".").append(100 + rnd.nextInt(900));
+                data.append(this.start).append(".000  ").append(rnd.nextInt(100000)).append(".").append(rnd.nextInt(10)).append("  ").append(rnd.nextInt(100000)).append(".").append(rnd.nextInt(10)).append("  ").append(rnd.nextInt(100000)).append(".").append(rnd.nextInt(10)).append("  ").append(rnd.nextInt(200)).append(".").append(100 + rnd.nextInt(900)).append("  ").append(rnd.nextInt(200)).append(".").append(100 + rnd.nextInt(900)).append("  ").append(rnd.nextInt(200)).append(".").append(100 + rnd.nextInt(900));
                 data.append("\n");
-                start += h;
+                this.start += h;
             }
+            this.start=start;
             try(FileWriter writer = new FileWriter(directory.getPath()+"/"+filename,false)){
                 writer.write(data.toString());
             } catch (IOException e) {

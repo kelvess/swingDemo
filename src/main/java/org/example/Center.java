@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.prefs.Preferences;
 
 import static java.nio.file.Files.readAllLines;
+import static javax.swing.JComponent.getDefaultLocale;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Center {
@@ -87,7 +88,7 @@ public class Center {
         JPanel leftBottomLabel = new JPanel(new BorderLayout());//дополнительная панелька для двух лейблов
         leftBottomLabel.add(fileLabel,BorderLayout.NORTH);
         leftBottomLabel.add(filePathLabel,BorderLayout.SOUTH);
-        leftBottom.add(leftBottomLabel,BorderLayout.NORTH);//добавили на север доп. панель с лейблами
+        leftBottom.add(leftBottomLabel,BorderLayout.NORTH);//Добавили на север доп. панель с лейблами
         text.setEditable(false);
         text.setFont(new Font("Arial",Font.PLAIN,12));
         leftBottom.add(new JScrollPane(text),BorderLayout.CENTER);//добавили на центр скролпейн с текстом
@@ -124,6 +125,8 @@ public class Center {
             rightTop.remove(1);
         table = new JTable(tableData,colNames); //создаём новую таблицу конструктором с "нашими" даннными
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
         rightTop.add(new JScrollPane(table), BorderLayout.CENTER);//добавляем вместо старой таблицы (если она была)
         //после удаления и добавления нового перерисовать панель
         rightTop.revalidate();
@@ -148,8 +151,8 @@ public class Center {
 
     private JLabel createLabel(String text){//метод для создания лейблов "центра"
         JLabel jlabel = new JLabel(text, SwingConstants.CENTER);
-        jlabel.setFont(Main.arialBold);
-        jlabel.setBackground(Main.grayColor);
+        jlabel.setFont(MainFrame.arialBold);
+        jlabel.setBackground(MainFrame.grayColor);
         jlabel.setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
         jlabel.setPreferredSize(new Dimension(0,30));
         jlabel.setMaximumSize(new Dimension(2000,30));
@@ -186,7 +189,7 @@ public class Center {
         if (file==null){//нет файла - нет дела
             return;
         }
-        if (isOpenFile(file)){//если файл уже содержится в "каталоге" - ничего не делать (алерт вылетит из этого метода)
+        if (isOpenFile(file)){//если файл уже содержится в "каталоге" - ничего не делать (предупреждение вылетит из этого метода)
             return;
         }
 
