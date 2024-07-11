@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.prefs.Preferences;
 
 import static java.nio.file.Files.readAllLines;
-import static javax.swing.JComponent.getDefaultLocale;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Center {
@@ -47,7 +46,6 @@ public class Center {
     private final ArrayList<String> catalogButtonsPaths= new ArrayList<>();
     private static final ArrayList<JButton> catalogButtons= new ArrayList<>();
     void fillLeftTop(JButton button){
-        //добавляет кнопку в панель, в arraylist и перерисовывает панель
         leftTopButtons.add(button);
         catalogButtons.add(button);
         leftTopButtons.repaint();
@@ -55,93 +53,77 @@ public class Center {
 
 
     protected Center(Preferences historyPref){
-        //инициализация полей сплит пейнов и их настройки масштабированния
         center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,true);
         left = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true);
         right = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true);
-        this.historyPref=historyPref;//присвоение полю предпочтений истории
+        this.historyPref=historyPref;
         center.setResizeWeight(0.5);
         right.setResizeWeight(0.5);
         left.setResizeWeight(0.5);
 
-
-        //создание лейблов для четырех окон, один из них может изменяться поэтому создан как поле
         JLabel fileLabel = createLabel("Файл");
         filePathLabel = createLabel("Path");
         JLabel catalogLabel = createLabel("Каталог");
         JLabel plotLabel = createLabel("График");
         JLabel tableLabel = createLabel("Таблица");
 
-
-        //заполнение левого верхнего элемента
         JPanel leftTop = new JPanel(new BorderLayout());
-        leftTop.add(catalogLabel,BorderLayout.NORTH);//добавили в север лейбл "каталог"
+        leftTop.add(catalogLabel,BorderLayout.NORTH);
         leftTopButtons = new JPanel();
-        leftTopButtons.setLayout(new BoxLayout(leftTopButtons,BoxLayout.Y_AXIS));//создание отдельной панели для кнопок
-        leftTop.add(new JScrollPane(leftTopButtons),BorderLayout.CENTER);//добавили в центр скролпейн, чтобы лейбл оставался
-        // на месте и крутить можно было только сами кнопки
+        leftTopButtons.setLayout(new BoxLayout(leftTopButtons,BoxLayout.Y_AXIS));
+        leftTop.add(new JScrollPane(leftTopButtons),BorderLayout.CENTER);
+
         left.setTopComponent(leftTop);
-
-
-        //заполнение левого нижнего элемента
-        JPanel leftBottom = new JPanel(new BorderLayout());//основная панель
-        JPanel leftBottomLabel = new JPanel(new BorderLayout());//дополнительная панелька для двух лейблов
+        JPanel leftBottom = new JPanel(new BorderLayout());
+        JPanel leftBottomLabel = new JPanel(new BorderLayout());
         leftBottomLabel.add(fileLabel,BorderLayout.NORTH);
         leftBottomLabel.add(filePathLabel,BorderLayout.SOUTH);
-        leftBottom.add(leftBottomLabel,BorderLayout.NORTH);//Добавили на север доп. панель с лейблами
+        leftBottom.add(leftBottomLabel,BorderLayout.NORTH);
         text.setEditable(false);
         text.setFont(new Font("Arial",Font.PLAIN,12));
-        leftBottom.add(new JScrollPane(text),BorderLayout.CENTER);//добавили на центр скролпейн с текстом
+        leftBottom.add(new JScrollPane(text),BorderLayout.CENTER);
         left.setBottomComponent(leftBottom);
 
-
-        //заполнение правого верхнего элемента
         rightTop= new JPanel(new BorderLayout());
         rightTop.add(tableLabel,BorderLayout.NORTH);
-        table = new JTable();//инициализирую таблицу без кол-ва строк и столбцов, в принципе можно удалить эту строчку
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);// и эту тоже
-        rightTop.add(new JScrollPane(table), BorderLayout.CENTER);//ну и эту
+        table = new JTable();
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        rightTop.add(new JScrollPane(table), BorderLayout.CENTER);
         right.setTopComponent(rightTop);
 
-        //заполнение правого нижнего элемента (в данном случае только лейбл "график")
         JPanel rightBottom = new JPanel(new BorderLayout());
         rightBottom.add(plotLabel, BorderLayout.NORTH);
         right.setBottomComponent(rightBottom);
 
-        //уставновка в центральный слпитпейн боковых
         center.setLeftComponent(left);
         center.setRightComponent(right);
     }
 
-    void openAction(String string, String[][] tableData, String path, Top top){
+    protected void openAction(String string, String[][] tableData, String path, Top top){
         top.setTitle("Траектории - "+counter);
-        //обновление лейбла с filepath
         filePathLabel.setText(path);
         filePathLabel.revalidate();
         filePathLabel.repaint();
-        //установка текста в соответсвующую область
         text.setText(string);
-        if (rightTop.getComponentCount()>1)//если таблица справа сверху уже есть, то удаляем
+        if (rightTop.getComponentCount()>1) {
             rightTop.remove(1);
-        table = new JTable(tableData,colNames); //создаём новую таблицу конструктором с "нашими" даннными
+        }
+        table = new JTable(tableData,colNames);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
-        rightTop.add(new JScrollPane(table), BorderLayout.CENTER);//добавляем вместо старой таблицы (если она была)
-        //после удаления и добавления нового перерисовать панель
+        rightTop.add(new JScrollPane(table), BorderLayout.CENTER);
         rightTop.revalidate();
         rightTop.repaint();
     }
 
 
-    void setDividerPos(boolean set, Preferences settingsPref){
-        //устанавливает настройки делителей,либо сохраняет их в префы
+    protected void setDividerPos(boolean set, Preferences settingsPref){
         if (set){
             settingsPref.putDouble("left", (double) left.getDividerLocation() /left.getHeight());
             settingsPref.putDouble("right", (double) right.getDividerLocation() /right.getHeight());
             settingsPref.putDouble("center", (double) center.getDividerLocation() /center.getWidth());
-        }
-        else {
+        }else{
             left.setDividerLocation(settingsPref.getDouble("left",0.5));
             right.setDividerLocation(settingsPref.getDouble("right", 0.5));
             center.setDividerLocation(settingsPref.getDouble("center", 0.5));
@@ -149,7 +131,7 @@ public class Center {
     }
 
 
-    private JLabel createLabel(String text){//метод для создания лейблов "центра"
+    private JLabel createLabel(String text){
         JLabel jlabel = new JLabel(text, SwingConstants.CENTER);
         jlabel.setFont(MainFrame.arialBold);
         jlabel.setBackground(MainFrame.grayColor);
@@ -163,21 +145,23 @@ public class Center {
 
 
     protected void clearAll(Top top){
-        for (JButton button : catalogButtons)
-            leftTopButtons.remove(button);//удаляем все кнопки из верхней левой панели
+        for (JButton button : catalogButtons) {
+            leftTopButtons.remove(button);
+        }
         leftTopButtons.repaint();
-        catalogButtons.clear();//очистка поля arraylist с типом JButton
-        catalogButtonsPaths.clear();//очистка поля arraylist с типом String
-        if (rightTop.getComponentCount()>1)
+        catalogButtons.clear();
+        catalogButtonsPaths.clear();
+        if (rightTop.getComponentCount()>1) {
             rightTop.remove(1);//если таблица есть - удаляем
-        text.setText("");//установка пустого окна с текстом
-        counter=1;//установка счётчика открытых файлов на 1
-        filePathLabel.setText("Path");//установка filepath на default
+        }
+        text.setText("");
+        counter=1;
+        filePathLabel.setText("Path");
         top.setTitle("Траектории");
         top.updateHistoryMenu(this);
     }
 
-    protected void setCounter(int i){//сеттер для номера следующего открытого файла
+    protected void setCounter(int i){
         counter+=i;
     }
 
@@ -185,45 +169,42 @@ public class Center {
         return center;
     }
 
-    void openFile(File file, Top top){
-        if (file==null){//нет файла - нет дела
+    protected void openFile(File file, Top top){
+        if (file==null){
             return;
         }
-        if (isOpenFile(file)){//если файл уже содержится в "каталоге" - ничего не делать (предупреждение вылетит из этого метода)
+        if (isOpenFile(file)){
             return;
         }
-
-        top.saveHistory(file,this.historyPref);//сохранить в истории открытых файлов
-        top.updateHistoryMenu(this);//обновить менюшку с недавними
-        catalogButtonsPaths.add(file.getAbsolutePath());//добавить в arraylist<string> путей
-        JButton catalogButton = new JButton("Траектория "+counter);//создание и настройка кнопки для размещения в левом верхнем углу
+        top.saveHistory(file,this.historyPref);
+        top.updateHistoryMenu(this);
+        catalogButtonsPaths.add(file.getAbsolutePath());
+        JButton catalogButton = new JButton("Траектория "+counter);
         catalogButton.setPreferredSize(new Dimension(0,30));
         catalogButton.setMaximumSize(new Dimension(2000,30));
         catalogButton.setMinimumSize(new Dimension(80,30));
         catalogButton.setBackground(Color.GRAY);
         String string;
-        //попытка чтенния файла в строку для заполения текстовой области
+
         try {
             string=String.join("\n ", readAllLines(Paths.get(file.toURI()), StandardCharsets.UTF_8));
-        } catch (IOException ex) {
+        }catch (IOException ex) {
             showMessageDialog(null, "Файл не соответсвует траектории!");
             System.err.println(ex);
             return;
         }
 
-        ArrayList<String> tableRows=new ArrayList<>();//переменная для хранения строк файла, которая будет заполнятся при соот-вии файла регулярке ниже
+        ArrayList<String> tableRows=new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String str = reader.readLine();
             while (str != null) {
-                if (str.matches("[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8} {2}[0-9]{0,8}\\.[0-9]{0,8}")) {
-                    tableRows.addAll(Arrays.asList(str.split(" {2}")));
-                }
+                tableRows.addAll(Arrays.asList(str.split(" {2}")));
                 str = reader.readLine();
             }
-        } catch (IOException ex) {
+        }catch (IOException ex) {
             throw new RuntimeException(ex);
         }
-        //разделяем arraylist в двумерный массив для передачи в конструктор JTable
+
         String[][] tableData = new String[tableRows.size()/7][7];
         for (int i=0;i<tableRows.size()/7;i++){
             for (int j=0;j<7;j++){
@@ -231,41 +212,32 @@ public class Center {
             }
         }
 
-        //установка на кнопку действия
         catalogButton.addActionListener(e-> this.openAction(string,tableData,file.getAbsolutePath(),top));
-        this.setCounter(1);//увеличние на +1 счётчика следующей траектории
-        this.fillLeftTop(catalogButton);//заполнение левой верхней панели
+        this.setCounter(1);
+        this.fillLeftTop(catalogButton);
         leftTopButtons.revalidate();
-        top.updateCloseMenu(catalogButtons,catalogButtonsPaths,this);//полное перезаполнение субменю для удаления этой кнопки
+        top.updateCloseMenu(catalogButtons,catalogButtonsPaths,this);
     }
 
-    //действие при нажатии на одну из кнопок из раздела "закрыть"
+
     protected void closeAction(JButton button, int j, Top top, String catalogButtonPath){
-        if (catalogButtons.size()==1){//теперь если кнопка осталась последняя - будет
-            // выполняться clearAll - то есть следующие открытые файлы будут нумерованы с 1, а не с последнего+1
+        if (catalogButtons.size()==1){
             clearAll(top);
-        }
-        else{
-            if (top.getTitle().length() > 11) {//если траектория была открыта
-                if (Integer.parseInt(top.getTitle().substring(13)) == j) {//если номер траектории совпадает с открытой сейчас
-                    text.setText("");//установить текст на default
-                    top.setTitle("Траектории");//установить тайл на default
-                    filePathLabel.setText("Path");//установить filepath на default
-                    if (rightTop.getComponentCount() > 1)//удалить таблицу если была
+        }else{
+            if (top.getTitle().length() > 11) {
+                if (Integer.parseInt(top.getTitle().substring(13)) == j) {
+                    text.setText("");
+                    top.setTitle("Траектории");
+                    filePathLabel.setText("Path");
+                    if (rightTop.getComponentCount() > 1)
                         rightTop.remove(1);
                 }
             }
-
-            //удаление из верхней левой панельки кнопки открытия
             leftTopButtons.remove(button);
-            //удаление из arraylist<jbutton> с кнопками
             catalogButtons.remove(button);
-            //удаление из arraylist<string> с путями
             catalogButtonsPaths.remove(catalogButtonPath);
-
-
-            leftTopButtons.repaint();//перерисовка после удаления
-            leftTopButtons.revalidate();//только repaint() не решает отрисовку после закрытия
+            leftTopButtons.repaint();
+            leftTopButtons.revalidate();
         }
         for (String h:catalogButtonsPaths){
             System.out.println(h);
@@ -278,8 +250,7 @@ public class Center {
     }
 
 
-    //проверка на то, есть ли путь к файлу среди открытых
-    boolean isOpenFile(File file){
+    private boolean isOpenFile(File file){
         for (String catalogButtonsPath : catalogButtonsPaths) {
             if (Objects.equals(catalogButtonsPath, file.getAbsolutePath())) {
                 showMessageDialog(null, "Эта траектория уже открыта!");

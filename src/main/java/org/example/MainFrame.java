@@ -21,8 +21,7 @@ public class MainFrame {
         JFrame frame =new JFrame();
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        }
-        catch (Exception e){
+        }catch (Exception e){
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
         init(frame);
@@ -32,7 +31,6 @@ public class MainFrame {
         frame.setTitle("Траектории");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         Toolkit toolkit= Toolkit.getDefaultToolkit();
-        //не стал удалять
         frame.setBounds(toolkit.getScreenSize().width/2 -300,toolkit.getScreenSize().height/2-200,600,400);
         frame.setMinimumSize(new Dimension(600,400));
         frame.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -41,7 +39,7 @@ public class MainFrame {
         Top top = new Top(settingsPref,center,readHistory());
         frame.add(top.getJPanel(),BorderLayout.NORTH);
         frame.add(center.getJSplitPane(),BorderLayout.CENTER);
-        frame.pack();//для работы LayoutManagers
+        frame.pack();
         frame.setVisible(true);
         center.setDividerPos(false, settingsPref);
     }
