@@ -10,6 +10,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -99,8 +100,8 @@ public class Center {
         center.setRightComponent(right);
     }
 
-    protected void openAction(String string, String[][] tableData, String path, Top top){
-        top.setTitle("Траектории - "+counter);
+    protected void openAction(String string, String[][] tableData, String path, Top top, int i){
+        top.setTitle("Траектории - "+i);
         filePathLabel.setText(path);
         filePathLabel.revalidate();
         filePathLabel.repaint();
@@ -120,13 +121,16 @@ public class Center {
 
     protected void setDividerPos(boolean set, Preferences settingsPref){
         if (set){
+            settingsPref.putDouble("center", (double) center.getDividerLocation() /center.getWidth());
             settingsPref.putDouble("left", (double) left.getDividerLocation() /left.getHeight());
             settingsPref.putDouble("right", (double) right.getDividerLocation() /right.getHeight());
-            settingsPref.putDouble("center", (double) center.getDividerLocation() /center.getWidth());
+            showMessageDialog(null,"Настройки сохранены!");
         }else{
+            SwingUtilities.invokeLater(()->{
+            center.setDividerLocation(settingsPref.getDouble("center", 0.5));
             left.setDividerLocation(settingsPref.getDouble("left",0.5));
             right.setDividerLocation(settingsPref.getDouble("right", 0.5));
-            center.setDividerLocation(settingsPref.getDouble("center", 0.5));
+            });
         }
     }
 
@@ -211,8 +215,8 @@ public class Center {
                 tableData[i][j]=tableRows.get(i*7+j);
             }
         }
-
-        catalogButton.addActionListener(e-> this.openAction(string,tableData,file.getAbsolutePath(),top));
+        int i = counter;
+        catalogButton.addActionListener(e-> this.openAction(string,tableData,file.getAbsolutePath(),top,i));
         this.setCounter(1);
         this.fillLeftTop(catalogButton);
         leftTopButtons.revalidate();

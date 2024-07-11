@@ -32,7 +32,7 @@ public class Top {
     private final JPanel top;
     private final String[] history;
 
-    protected Top(Preferences settingsPref, Center center, String[] history){
+    protected Top(Center center, String[] history,Preferences settingsPref){
         this.history=history;
         title = new JLabel("Траектории",SwingConstants.CENTER);
         title.setBackground(grayColor);
