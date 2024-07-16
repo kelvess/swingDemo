@@ -30,6 +30,8 @@ import static java.nio.file.Files.readAllLines;
 import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Center {
+    private final int TITLE_DEFAULT_LENGHT = 11;
+    private final int INDEX_OF_TRAJECT_NUMBER = 13;
 
     private final JSplitPane center;
     private final JSplitPane left;
@@ -40,24 +42,24 @@ public class Center {
 
     private JTable table;
     private final JLabel filePathLabel;
-    private  final JTextArea text = new JTextArea();
-    private int counter=1;
+    private final JTextArea text = new JTextArea();
+    private int counter = 1;
 
-    private final String[] colNames={"T,c","X,м","Y,м","Z,м","Vx,м/c","Vy,м/c","Vz,м/c"};
-    private final ArrayList<String> catalogButtonsPaths= new ArrayList<>();
-    private static final ArrayList<JButton> catalogButtons= new ArrayList<>();
-    void fillLeftTop(JButton button){
+    private final String[] colNames = {"T,c", "X,м", "Y,м", "Z,м", "Vx,м/c", "Vy,м/c", "Vz,м/c"};
+    private final ArrayList<String> catalogButtonsPaths = new ArrayList<>();
+    private static final ArrayList<JButton> catalogButtons = new ArrayList<>();
+
+    protected void fillLeftTop(JButton button) {
         leftTopButtons.add(button);
         catalogButtons.add(button);
         leftTopButtons.repaint();
     }
 
-
-    protected Center(Preferences historyPref){
-        center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,true);
-        left = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true);
-        right = new JSplitPane(JSplitPane.VERTICAL_SPLIT,true);
-        this.historyPref=historyPref;
+    protected Center(Preferences historyPref) {
+        center = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
+        left = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+        right = new JSplitPane(JSplitPane.VERTICAL_SPLIT, true);
+        this.historyPref = historyPref;
         center.setResizeWeight(0.5);
         right.setResizeWeight(0.5);
         left.setResizeWeight(0.5);
@@ -69,24 +71,24 @@ public class Center {
         JLabel tableLabel = createLabel("Таблица");
 
         JPanel leftTop = new JPanel(new BorderLayout());
-        leftTop.add(catalogLabel,BorderLayout.NORTH);
+        leftTop.add(catalogLabel, BorderLayout.NORTH);
         leftTopButtons = new JPanel();
-        leftTopButtons.setLayout(new BoxLayout(leftTopButtons,BoxLayout.Y_AXIS));
-        leftTop.add(new JScrollPane(leftTopButtons),BorderLayout.CENTER);
+        leftTopButtons.setLayout(new BoxLayout(leftTopButtons, BoxLayout.Y_AXIS));
+        leftTop.add(new JScrollPane(leftTopButtons), BorderLayout.CENTER);
 
         left.setTopComponent(leftTop);
         JPanel leftBottom = new JPanel(new BorderLayout());
         JPanel leftBottomLabel = new JPanel(new BorderLayout());
-        leftBottomLabel.add(fileLabel,BorderLayout.NORTH);
-        leftBottomLabel.add(filePathLabel,BorderLayout.SOUTH);
-        leftBottom.add(leftBottomLabel,BorderLayout.NORTH);
+        leftBottomLabel.add(fileLabel, BorderLayout.NORTH);
+        leftBottomLabel.add(filePathLabel, BorderLayout.SOUTH);
+        leftBottom.add(leftBottomLabel, BorderLayout.NORTH);
         text.setEditable(false);
-        text.setFont(new Font("Arial",Font.PLAIN,12));
-        leftBottom.add(new JScrollPane(text),BorderLayout.CENTER);
+        text.setFont(new Font("Arial", Font.PLAIN, 12));
+        leftBottom.add(new JScrollPane(text), BorderLayout.CENTER);
         left.setBottomComponent(leftBottom);
 
-        rightTop= new JPanel(new BorderLayout());
-        rightTop.add(tableLabel,BorderLayout.NORTH);
+        rightTop = new JPanel(new BorderLayout());
+        rightTop.add(tableLabel, BorderLayout.NORTH);
         table = new JTable();
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         rightTop.add(new JScrollPane(table), BorderLayout.CENTER);
@@ -100,16 +102,16 @@ public class Center {
         center.setRightComponent(right);
     }
 
-    protected void openAction(String string, String[][] tableData, String path, Top top, int i){
-        top.setTitle("Траектории - "+i);
+    protected void openAction(String string, String[][] tableData, String path, Top top, int i) {
+        top.setTitle("Траектории - " + i);
         filePathLabel.setText(path);
         filePathLabel.revalidate();
         filePathLabel.repaint();
         text.setText(string);
-        if (rightTop.getComponentCount()>1) {
+        if (rightTop.getComponentCount() > 1) {
             rightTop.remove(1);
         }
-        table = new JTable(tableData,colNames);
+        table = new JTable(tableData, colNames);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
         table.getTableHeader().setReorderingAllowed(false);
         table.getTableHeader().setResizingAllowed(false);
@@ -119,117 +121,123 @@ public class Center {
     }
 
 
-    protected void setDividerPos(boolean set, Preferences settingsPref){
-        if (set){
-            settingsPref.putDouble("center", (double) center.getDividerLocation() /center.getWidth());
-            settingsPref.putDouble("left", (double) left.getDividerLocation() /left.getHeight());
-            settingsPref.putDouble("right", (double) right.getDividerLocation() /right.getHeight());
-            showMessageDialog(null,"Настройки сохранены!");
-        }else{
-            SwingUtilities.invokeLater(()->{
-            center.setDividerLocation(settingsPref.getDouble("center", 0.5));
-            left.setDividerLocation(settingsPref.getDouble("left",0.5));
-            right.setDividerLocation(settingsPref.getDouble("right", 0.5));
+    protected void setDividerPos(boolean set, Preferences settingsPref) {
+        if (set) {
+            settingsPref.putDouble("center", (double) center.getDividerLocation() / center.getWidth());
+            settingsPref.putDouble("left", (double) left.getDividerLocation() / left.getHeight());
+            settingsPref.putDouble("right", (double) right.getDividerLocation() / right.getHeight());
+            showMessageDialog(null, "Настройки сохранены!");
+        } else {
+            SwingUtilities.invokeLater(() -> {
+                center.setDividerLocation(settingsPref.getDouble("center", 0.5));
+                left.setDividerLocation(settingsPref.getDouble("left", 0.5));
+                right.setDividerLocation(settingsPref.getDouble("right", 0.5));
             });
         }
     }
 
 
-    private JLabel createLabel(String text){
+    private JLabel createLabel(String text) {
         JLabel jlabel = new JLabel(text, SwingConstants.CENTER);
         jlabel.setFont(MainFrame.arialBold);
         jlabel.setBackground(MainFrame.grayColor);
-        jlabel.setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
-        jlabel.setPreferredSize(new Dimension(0,30));
-        jlabel.setMaximumSize(new Dimension(2000,30));
-        jlabel.setMinimumSize(new Dimension(80,30));
-        jlabel.setBorder(BorderFactory.createLineBorder(Color.GRAY,1));
+        jlabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        jlabel.setPreferredSize(new Dimension(0, 30));
+        jlabel.setMaximumSize(new Dimension(2000, 30));
+        jlabel.setMinimumSize(new Dimension(80, 30));
+        jlabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         return jlabel;
     }
 
 
-    protected void clearAll(Top top){
+    protected void clearAll(Top top) {
         for (JButton button : catalogButtons) {
             leftTopButtons.remove(button);
         }
         leftTopButtons.repaint();
         catalogButtons.clear();
         catalogButtonsPaths.clear();
-        if (rightTop.getComponentCount()>1) {
-            rightTop.remove(1);//если таблица есть - удаляем
+        if (rightTop.getComponentCount() > 1) {
+            rightTop.remove(1);
         }
         text.setText("");
-        counter=1;
+        counter = 1;
         filePathLabel.setText("Path");
         top.setTitle("Траектории");
         top.updateHistoryMenu(this);
     }
 
-    protected void setCounter(int i){
-        counter+=i;
+    protected void setCounter(int i) {
+        counter += i;
     }
 
-    protected JSplitPane getJSplitPane(){//геттер для центрального сплитпейна
+    protected JSplitPane getJSplitPane() {
         return center;
     }
 
-    protected void openFile(File file, Top top){
-        if (file==null){
+    protected void openFile(File file, Top top) {
+        if (file == null) {
             return;
         }
-        if (isOpenFile(file)){
+        if (isOpenFile(file)) {
+            showMessageDialog(null, "Эта траектория уже открыта!");
             return;
         }
-        top.saveHistory(file,this.historyPref);
-        top.updateHistoryMenu(this);
-        catalogButtonsPaths.add(file.getAbsolutePath());
-        JButton catalogButton = new JButton("Траектория "+counter);
-        catalogButton.setPreferredSize(new Dimension(0,30));
-        catalogButton.setMaximumSize(new Dimension(2000,30));
-        catalogButton.setMinimumSize(new Dimension(80,30));
+
+        JButton catalogButton = new JButton("Траектория " + counter);
+        catalogButton.setPreferredSize(new Dimension(0, 30));
+        catalogButton.setMaximumSize(new Dimension(2000, 30));
+        catalogButton.setMinimumSize(new Dimension(80, 30));
         catalogButton.setBackground(Color.GRAY);
         String string;
 
         try {
-            string=String.join("\n ", readAllLines(Paths.get(file.toURI()), StandardCharsets.UTF_8));
-        }catch (IOException ex) {
-            showMessageDialog(null, "Файл не соответсвует траектории!");
-            System.err.println(ex);
+            string = String.join("\n ", readAllLines(Paths.get(file.toURI()), StandardCharsets.UTF_8));
+        } catch (IOException ex) {
+            showMessageDialog(null, "Файл не соответствует .txt!");
+            System.err.println("Ошибка при чтении файла в строку");
+            ex.printStackTrace();
             return;
         }
 
-        ArrayList<String> tableRows=new ArrayList<>();
+        ArrayList<String> tableRows = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String str = reader.readLine();
             while (str != null) {
                 tableRows.addAll(Arrays.asList(str.split(" {2}")));
                 str = reader.readLine();
             }
-        }catch (IOException ex) {
-            throw new RuntimeException(ex);
+        } catch (Exception ex) {
+            System.err.println("Ошибка при чтении файла в arraylist");
+           ex.printStackTrace();
+           return;
         }
 
-        String[][] tableData = new String[tableRows.size()/7][7];
-        for (int i=0;i<tableRows.size()/7;i++){
-            for (int j=0;j<7;j++){
-                tableData[i][j]=tableRows.get(i*7+j);
+        String[][] tableData = new String[tableRows.size() / 7][7];
+        for (int i = 0; i < tableRows.size() / 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                tableData[i][j] = tableRows.get(i * 7 + j);
             }
         }
         int i = counter;
-        catalogButton.addActionListener(e-> this.openAction(string,tableData,file.getAbsolutePath(),top,i));
+        catalogButton.addActionListener(e -> this.openAction(string, tableData, file.getAbsolutePath(), top, i));
         this.setCounter(1);
         this.fillLeftTop(catalogButton);
         leftTopButtons.revalidate();
-        top.updateCloseMenu(catalogButtons,catalogButtonsPaths,this);
+        top.saveHistory(file, this.historyPref);
+        top.updateHistoryMenu(this);
+        catalogButtonsPaths.add(file.getAbsolutePath());
+
+        top.updateCloseMenu(catalogButtons, catalogButtonsPaths, this);
     }
 
 
-    protected void closeAction(JButton button, int j, Top top, String catalogButtonPath){
-        if (catalogButtons.size()==1){
+    protected void closeAction(JButton button, int j, Top top, String catalogButtonPath) {
+        if (catalogButtons.size() == 1) {
             clearAll(top);
-        }else{
-            if (top.getTitle().length() > 11) {
-                if (Integer.parseInt(top.getTitle().substring(13)) == j) {
+        } else {
+            if (top.getTitle().length() > TITLE_DEFAULT_LENGHT) {
+                if (Integer.parseInt(top.getTitle().substring(INDEX_OF_TRAJECT_NUMBER)) == j) {
                     text.setText("");
                     top.setTitle("Траектории");
                     filePathLabel.setText("Path");
@@ -243,27 +251,18 @@ public class Center {
             leftTopButtons.repaint();
             leftTopButtons.revalidate();
         }
-        for (String h:catalogButtonsPaths){
-            System.out.println(h);
-            System.out.println(filePathLabel.getText());
-        }
-        for (JButton h: catalogButtons){
-            System.out.println(h.getText());
-        }
 
     }
 
 
-    private boolean isOpenFile(File file){
+    private boolean isOpenFile(File file) {
         for (String catalogButtonsPath : catalogButtonsPaths) {
             if (Objects.equals(catalogButtonsPath, file.getAbsolutePath())) {
-                showMessageDialog(null, "Эта траектория уже открыта!");
                 return true;
             }
         }
         return false;
     }
-
 
 
 }
