@@ -14,15 +14,14 @@ public class MainFrame {
 
     private static final Preferences historyPref = Preferences.userRoot().node("swingDemo/history");
     private static final Preferences settingsPref = Preferences.userRoot().node("swingDemo/settings");
-    static final Font arialBold = new Font("Arial", Font.BOLD, 14);
-    static final Color grayColor = new Color(211, 211, 211);
+    protected static final Font arialBold = new Font("Arial", Font.BOLD, 14);
+    protected static final Color grayColor = new Color(211, 211, 211);
 
     public void createAndShowGUI() {
         JFrame frame = new JFrame();
         try {
             UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
         } catch (Exception e) {
-            System.err.println("Ошибка в UIManager.setLF");
             e.printStackTrace(System.err);
         }
         init(frame);

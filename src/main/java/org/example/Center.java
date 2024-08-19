@@ -31,7 +31,8 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 public class Center {
     private final int TITLE_DEFAULT_LENGHT = 11;
-    private final int INDEX_OF_TRAJECT_NUMBER = 13;
+    private final int TITLE_INDEX_OF_TRAJECT_NUMBER = 13;
+    private final int BUTTON_INDEX_OF_TRAJECT_NUMBER = 11;
 
     private final JSplitPane center;
     private final JSplitPane left;
@@ -195,7 +196,6 @@ public class Center {
             string = String.join("\n ", readAllLines(Paths.get(file.toURI()), StandardCharsets.UTF_8));
         } catch (IOException ex) {
             showMessageDialog(null, "Файл не соответствует .txt!");
-            System.err.println("Ошибка при чтении файла в строку");
             ex.printStackTrace();
             return;
         }
@@ -208,9 +208,7 @@ public class Center {
                 str = reader.readLine();
             }
         } catch (Exception ex) {
-            System.err.println("Ошибка при чтении файла в arraylist");
            ex.printStackTrace();
-           return;
         }
 
         String[][] tableData = new String[tableRows.size() / 7][7];
@@ -232,12 +230,12 @@ public class Center {
     }
 
 
-    protected void closeAction(JButton button, int j, Top top, String catalogButtonPath) {
+    protected void closeAction(JButton button,int j, Top top, String catalogButtonPath) {
         if (catalogButtons.size() == 1) {
             clearAll(top);
         } else {
             if (top.getTitle().length() > TITLE_DEFAULT_LENGHT) {
-                if (Integer.parseInt(top.getTitle().substring(INDEX_OF_TRAJECT_NUMBER)) == j) {
+                if (Integer.parseInt(top.getTitle().substring(TITLE_INDEX_OF_TRAJECT_NUMBER)) == j) {
                     text.setText("");
                     top.setTitle("Траектории");
                     filePathLabel.setText("Path");
@@ -250,6 +248,9 @@ public class Center {
             catalogButtonsPaths.remove(catalogButtonPath);
             leftTopButtons.repaint();
             leftTopButtons.revalidate();
+            counter=Integer.parseInt(catalogButtons.get(catalogButtons.size()-1).getText().substring(BUTTON_INDEX_OF_TRAJECT_NUMBER))+1;
+
+
         }
 
     }
