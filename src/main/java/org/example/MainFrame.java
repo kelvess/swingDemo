@@ -3,19 +3,14 @@ package org.example;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Frame;
 import java.util.prefs.Preferences;
 
 public class MainFrame {
-    public static final int HISTORY_CAPACITY=5;
-
+    public static final int HISTORY_CAPACITY = 5;
     private static final Preferences historyPref = Preferences.userRoot().node("swingDemo/history");
     private static final Preferences settingsPref = Preferences.userRoot().node("swingDemo/settings");
-    protected static final Font arialBold = new Font("Arial", Font.BOLD, 14);
-    protected static final Color grayColor = new Color(211, 211, 211);
 
     public void createAndShowGUI() {
         JFrame frame = new JFrame();

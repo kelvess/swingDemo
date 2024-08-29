@@ -33,6 +33,7 @@ public class Center {
     private final int TITLE_DEFAULT_LENGHT = 11;
     private final int TITLE_INDEX_OF_TRAJECT_NUMBER = 13;
     private final int BUTTON_INDEX_OF_TRAJECT_NUMBER = 11;
+    private final int SIZE_OF_DATA = 7;
 
     private final JSplitPane center;
     private final JSplitPane left;
@@ -140,8 +141,8 @@ public class Center {
 
     private JLabel createLabel(String text) {
         JLabel jlabel = new JLabel(text, SwingConstants.CENTER);
-        jlabel.setFont(MainFrame.arialBold);
-        jlabel.setBackground(MainFrame.grayColor);
+        jlabel.setFont(Appearance.getArialBold());
+        jlabel.setBackground(Appearance.getGrayColor());
         jlabel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         jlabel.setPreferredSize(new Dimension(0, 30));
         jlabel.setMaximumSize(new Dimension(2000, 30));
@@ -208,13 +209,13 @@ public class Center {
                 str = reader.readLine();
             }
         } catch (Exception ex) {
-           ex.printStackTrace();
+            ex.printStackTrace();
         }
 
-        String[][] tableData = new String[tableRows.size() / 7][7];
-        for (int i = 0; i < tableRows.size() / 7; i++) {
-            for (int j = 0; j < 7; j++) {
-                tableData[i][j] = tableRows.get(i * 7 + j);
+        String[][] tableData = new String[tableRows.size() / SIZE_OF_DATA][SIZE_OF_DATA];
+        for (int i = 0; i < tableRows.size() / SIZE_OF_DATA; i++) {
+            for (int j = 0; j < SIZE_OF_DATA; j++) {
+                tableData[i][j] = tableRows.get(i * SIZE_OF_DATA + j);
             }
         }
         int i = counter;
@@ -230,7 +231,7 @@ public class Center {
     }
 
 
-    protected void closeAction(JButton button,int j, Top top, String catalogButtonPath) {
+    protected void closeAction(JButton button, int j, Top top, String catalogButtonPath) {
         if (catalogButtons.size() == 1) {
             clearAll(top);
         } else {
@@ -248,7 +249,7 @@ public class Center {
             catalogButtonsPaths.remove(catalogButtonPath);
             leftTopButtons.repaint();
             leftTopButtons.revalidate();
-            counter=Integer.parseInt(catalogButtons.get(catalogButtons.size()-1).getText().substring(BUTTON_INDEX_OF_TRAJECT_NUMBER))+1;
+            counter = Integer.parseInt(catalogButtons.get(catalogButtons.size() - 1).getText().substring(BUTTON_INDEX_OF_TRAJECT_NUMBER)) + 1;
 
 
         }

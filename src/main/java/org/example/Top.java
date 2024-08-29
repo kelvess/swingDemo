@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 
-import static org.example.MainFrame.arialBold;
-import static org.example.MainFrame.grayColor;
 
 public class Top {
     private final JLabel title;
@@ -35,8 +33,8 @@ public class Top {
     protected Top(Center center, String[] history, Preferences settingsPref) {
         this.history = history;
         title = new JLabel("Траектории", SwingConstants.CENTER);
-        title.setBackground(grayColor);
-        title.setFont(arialBold);
+        title.setBackground(Appearance.getGrayColor());
+        title.setFont(Appearance.getArialBold());
         title.setOpaque(true);
         title.setBounds(0, 0, 100, 30);
         title.setPreferredSize(new Dimension(70, 25));
@@ -72,7 +70,7 @@ public class Top {
     private JMenu createFileMenu(Center center) {
         JMenu file = new JMenu("Файл");
         file.setFont(new Font("Arial", Font.PLAIN, 16));
-        file.setBackground(grayColor);
+        file.setBackground(Appearance.getGrayColor());
         file.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         file.setHorizontalAlignment(SwingConstants.LEFT);
         JMenuItem open = new JMenuItem("Открыть");
@@ -105,7 +103,7 @@ public class Top {
     private JMenu createSettingsMenu(Preferences settingsPref, Center center) {
         JMenu settings = new JMenu("Настройки");
         settings.setHorizontalAlignment(SwingConstants.LEFT);
-        settings.setBackground(grayColor);
+        settings.setBackground(Appearance.getGrayColor());
         settings.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         settings.setFont(new Font("Arial", Font.PLAIN, 16));
         JMenuItem saveSettings = new JMenuItem("Сохранить положение окон");
@@ -171,7 +169,7 @@ public class Top {
     }
 
     private void swapHistory() {
-        for (int i = MainFrame.HISTORY_CAPACITY-1; i > 0; i--) {
+        for (int i = MainFrame.HISTORY_CAPACITY - 1; i > 0; i--) {
             history[i] = history[i - 1];
         }
     }
